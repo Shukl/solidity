@@ -594,8 +594,13 @@ bool CompilerStack::checkLibraryNameClashes()
 string CompilerStack::absolutePath(string const& _path, string const& _reference) const
 {
 	// Anything that does not start with `.` is an absolute path.
-	if (_path.empty() || _path.front() != '.')
+	size_t slashPos { _path.find_first_of('/') };
+	if (slashPos == string::npos)
+		slashPos = _path.length();
+	string const firstDir { _path.substr(0, slashPos) };
+	if (firstDir != ".." && firstDir != ".")
 		return _path;
+
 	using path = boost::filesystem::path;
 	path p(_path);
 	path result(_reference);
